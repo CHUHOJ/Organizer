@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organizer.UI", "Organizer.UI\Organizer.UI.csproj", "{6378542E-963B-4B58-BC57-A82488FAB4A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organizer.DataAccess", "Organizer.DataAccess\Organizer.DataAccess.csproj", "{2077E811-5D0B-4070-AB1A-63C7E0AE7C74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Organizer.Model", "Organizer.Model\Organizer.Model.csproj", "{31DEE64C-33D4-4434-B73F-FE9A9BEA5FFF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6378542E-963B-4B58-BC57-A82488FAB4A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6378542E-963B-4B58-BC57-A82488FAB4A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6378542E-963B-4B58-BC57-A82488FAB4A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6378542E-963B-4B58-BC57-A82488FAB4A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2077E811-5D0B-4070-AB1A-63C7E0AE7C74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2077E811-5D0B-4070-AB1A-63C7E0AE7C74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2077E811-5D0B-4070-AB1A-63C7E0AE7C74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2077E811-5D0B-4070-AB1A-63C7E0AE7C74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31DEE64C-33D4-4434-B73F-FE9A9BEA5FFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31DEE64C-33D4-4434-B73F-FE9A9BEA5FFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31DEE64C-33D4-4434-B73F-FE9A9BEA5FFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31DEE64C-33D4-4434-B73F-FE9A9BEA5FFF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
