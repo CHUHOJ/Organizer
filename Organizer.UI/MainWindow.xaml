@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Organizer.UI"
+        xmlns:view="clr-namespace:Organizer.UI.View"
         mc:Ignorable="d" Icon="icon.ico"
         Title="Organizer" Height="350" Width="525" FontSize="20">
     <Grid>
@@ -11,31 +12,7 @@
             <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <ListView ItemsSource="{Binding Persons}"
-                  SelectedItem="{Binding SelectedPerson,Mode=TwoWay}"
-                  DisplayMemberPath="FirstName"/>
-
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Label Content="Firstname" Margin="10 10 10 0"/>
-            <TextBox Grid.Row="1" Text="{Binding SelectedPerson.FirstName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                     Margin="10 0 10 10"/>
-
-            <Label Grid.Row="2" Content="Lastname" Margin="10 0"/>
-            <TextBox Grid.Row="3" Text="{Binding SelectedPerson.LastName,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                     Margin="10 0 10 10"/>
-
-            <Label Grid.Row="4" Content="Email" Margin="10 0"/>
-            <TextBox Grid.Row="5" Text="{Binding SelectedPerson.Email,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
-                     Margin="10 0 10 10"/>
-        </Grid>
+        <view:NavigationView DataContext="{Binding NavigationViewModel}"/>
+        <view:PersonDetailView Grid.Column="1" DataContext="{Binding PersonDetailViewModel}"/>
     </Grid>
 </Window>

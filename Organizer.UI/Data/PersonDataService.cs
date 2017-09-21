@@ -16,14 +16,12 @@ namespace Organizer.UI.Data
             _contextCreator = contextCreator;
         }
 
-        public async Task<List<Person>> GetAllAsync()
+        public async Task<Person> GetByIdAsync(int personId)
         {
             using (OrganizerDbContext context = _contextCreator())
             {
-                var friends= await context.Persons.AsNoTracking().ToListAsync();
-                //await Task.Delay(5000);
-
-                return friends;
+                return await context.Persons.AsNoTracking()
+                    .SingleOrDefaultAsync(x => x.Id == personId);
             }
         }
     }

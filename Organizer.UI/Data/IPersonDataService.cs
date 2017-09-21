@@ -6,6 +6,6 @@ namespace Organizer.UI.Data
 {
     public interface IPersonDataService
     {
-        Task<List<Person>> GetAllAsync();
+        Task<Person> GetByIdAsync(int personId);
     }
 }
