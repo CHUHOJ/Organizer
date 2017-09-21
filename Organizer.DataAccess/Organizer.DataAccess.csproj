@@ -102,15 +102,6 @@
   <ItemGroup>
     <Folder Include="Database\" />
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="App_Data\Organizer.mdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="App_Data\Organizer_log.ldf">
-      <DependentUpon>Organizer.mdf</DependentUpon>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
