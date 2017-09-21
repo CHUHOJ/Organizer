@@ -1,18 +1,30 @@
-﻿using Organizer.Model;
+﻿using Organizer.DataAccess;
+using Organizer.Model;
+using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Threading.Tasks;
 
 namespace Organizer.UI.Data
 {
     public class PersonDataService : IPersonDataService
     {
-        public IEnumerable<Person> GetAll()
+        private readonly Func<OrganizerDbContext> _contextCreator;
+
+        public PersonDataService(Func<OrganizerDbContext> contextCreator)
         {
-            // TODO: from db
-            yield return new Person { FirstName = "Adam", LastName = "Bolski" };
-            yield return new Person { FirstName = "Michał", LastName = "Rusowski" };
-            yield return new Person { FirstName = "Jan", LastName = "Wiśniewski" };
-            yield return new Person { FirstName = "Józef", LastName = "Nowak" };
-            yield return new Person { FirstName = "Witold", LastName = "Kowalski" };
+            _contextCreator = contextCreator;
+        }
+
+        public async Task<List<Person>> GetAllAsync()
+        {
+            using (OrganizerDbContext context = _contextCreator())
+            {
+                var friends= await context.Persons.AsNoTracking().ToListAsync();
+                //await Task.Delay(5000);
+
+                return friends;
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Organizer.DataAccess;
 using Organizer.UI.Data;
 using Organizer.UI.ViewModel;
 
@@ -9,6 +10,8 @@ namespace Organizer.UI.Startup
         public IContainer Bootstrap()
         {
             var builder = new ContainerBuilder();
+
+            builder.RegisterType<OrganizerDbContext>().AsSelf();
 
             builder.RegisterType<MainWindow>().AsSelf();
             builder.RegisterType<MainViewModel>().AsSelf();

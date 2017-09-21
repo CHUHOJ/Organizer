@@ -1,6 +1,7 @@
 ﻿using Organizer.Model;
 using Organizer.UI.Data;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace Organizer.UI.ViewModel
 {
@@ -14,9 +15,9 @@ namespace Organizer.UI.ViewModel
             _personDataService = personDataService;
         }
 
-        public void Load()
+        public async Task LoadAsync()
         {
-            var persons = _personDataService.GetAll();
+            var persons = await _personDataService.GetAllAsync();
             Persons.Clear();
             foreach (var p in persons)
             {
