@@ -4,6 +4,8 @@ using Organizer.Model;
 using Prism.Events;
 using Organizer.UI.Event;
 using System;
+using System.Windows.Input;
+using Prism.Commands;
 
 namespace Organizer.UI.ViewModel
 {
@@ -19,6 +21,24 @@ namespace Organizer.UI.ViewModel
             _eventAggregator = eventAggregator;
             _eventAggregator.GetEvent<OpenPersonDetailViewEvent>()
                 .Subscribe(OnOpenPersonDetailView);
+            SaveCommand = new DelegateCommand(OnSaveExecute, OnSaveCanExecute);
+        }
+
+        private void OnSaveExecute()
+        {
+            _personDataService.SaveAsync(Person);
+            _eventAggregator.GetEvent<AfterPersonSavedEvent>().Publish(
+                new AfterPersonSavedEventArgs
+                {
+                    Id = Person.Id,
+                    DisplayMember = $"{Person.FirstName} {Person.LastName}"
+                });
+        }
+
+        private bool OnSaveCanExecute()
+        {
+            // TODO: check if person is valid
+            return true;
         }
 
         private async void OnOpenPersonDetailView(int personId)
@@ -37,5 +57,7 @@ namespace Organizer.UI.ViewModel
         {
             Person = await _personDataService.GetByIdAsync(personId);
         }
+
+        public ICommand SaveCommand { get; }
     }
 }

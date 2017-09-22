@@ -1,9 +1,9 @@
-﻿using Organizer.Model;
-using Organizer.UI.Data;
+﻿using Organizer.UI.Data;
 using Organizer.UI.Event;
 using Prism.Events;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Organizer.UI.ViewModel
 {
@@ -17,7 +17,14 @@ namespace Organizer.UI.ViewModel
         {
             _personLookupService = personLookupService;
             _eventAggregator = eventAggregator;
-            Persons = new ObservableCollection<LookupItem>();
+            Persons = new ObservableCollection<NavigationItemViewModel>();
+            _eventAggregator.GetEvent<AfterPersonSavedEvent>().Subscribe(AfterPersonSaved);
+        }
+
+        private void AfterPersonSaved(AfterPersonSavedEventArgs obj)
+        {
+            var personSaved = Persons.Single(x => x.Id == obj.Id);
+            personSaved.DisplayMember = obj.DisplayMember;
         }
 
         public async Task LoadAsync()
@@ -26,14 +33,14 @@ namespace Organizer.UI.ViewModel
             Persons.Clear();
             foreach (var item in lookup)
             {
-                Persons.Add(item);
+                Persons.Add(new NavigationItemViewModel(item.Id, item.DisplayMember));
             }
         }
 
-        public ObservableCollection<LookupItem> Persons { get; }
+        public ObservableCollection<NavigationItemViewModel> Persons { get; }
 
-        private LookupItem _selectedPerson;
-        public LookupItem SelectedPerson
+        private NavigationItemViewModel _selectedPerson;
+        public NavigationItemViewModel SelectedPerson
         {
             get { return _selectedPerson; }
             set {

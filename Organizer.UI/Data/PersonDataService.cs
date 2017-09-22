@@ -24,5 +24,15 @@ namespace Organizer.UI.Data
                     .SingleOrDefaultAsync(x => x.Id == personId);
             }
         }
+
+        public async Task SaveAsync(Person person)
+        {
+            using (OrganizerDbContext context = _contextCreator())
+            {
+                context.Persons.Attach(person);
+                context.Entry(person).State = EntityState.Modified;
+                await context.SaveChangesAsync();
+            }
+        }
     }
 }
