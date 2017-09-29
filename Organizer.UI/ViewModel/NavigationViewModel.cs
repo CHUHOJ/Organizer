@@ -24,13 +24,20 @@ namespace Organizer.UI.ViewModel
 
         private void AfterPersonSaved(AfterPersonSavedEventArgs obj)
         {
-            var personSaved = Persons.Single(x => x.Id == obj.Id);
-            personSaved.DisplayMember = obj.DisplayMember;
+            var lookupItem = Persons.SingleOrDefault(x => x.Id == obj.Id);
+            if (lookupItem == null)
+            {
+                Persons.Add(new NavigationItemViewModel(obj.Id, obj.DisplayMember, _eventAggregator));
+            }
+            else
+            {
+                lookupItem.DisplayMember = obj.DisplayMember;
+            }
         }
 
         public async Task LoadAsync()
         {
-            var lookup  = await _personLookupService.GetPersonLookupAsync();
+            var lookup = await _personLookupService.GetPersonLookupAsync();
             Persons.Clear();
             foreach (var item in lookup)
             {

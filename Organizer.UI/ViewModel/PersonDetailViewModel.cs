@@ -6,6 +6,8 @@ using System.Windows.Input;
 using Prism.Commands;
 using Organizer.UI.Wrapper;
 using Organizer.UI.Data.Repositories;
+using Organizer.Model;
+using System;
 
 namespace Organizer.UI.ViewModel
 {
@@ -45,9 +47,11 @@ namespace Organizer.UI.ViewModel
             }
         }
 
-        public async Task LoadAsync(int personId)
+        public async Task LoadAsync(int? personId)
         {
-            var person = await _personRepository.GetByIdAsync(personId);
+            var person = personId.HasValue ?
+                await _personRepository.GetByIdAsync(personId.Value)
+                : CreateNewPerson();
 
             Person = new PersonWrapper(person);
             Person.PropertyChanged += (s, e) =>
@@ -82,6 +86,13 @@ namespace Organizer.UI.ViewModel
         private bool OnSaveCanExecute()
         {
             return Person != null && Person.HasErrors == false && HasChanges;
+        }
+
+        private Person CreateNewPerson()
+        {
+            var person = new Person();
+            _personRepository.Add(person);
+            return person;
         }
     }
 }

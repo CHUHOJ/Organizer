@@ -15,6 +15,11 @@ namespace Organizer.UI.Data.Repositories
             _context = context;
         }
 
+        public void Add(Person person)
+        {
+            _context.Persons.Add(person);
+        }
+
         public async Task<Person> GetByIdAsync(int personId)
         {
             return await _context.Persons.SingleOrDefaultAsync(x => x.Id == personId);

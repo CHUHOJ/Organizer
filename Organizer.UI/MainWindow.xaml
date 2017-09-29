@@ -8,11 +8,23 @@
         mc:Ignorable="d" Icon="icon.ico"
         Title="Organizer" Height="350" Width="525" FontSize="20">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <view:NavigationView DataContext="{Binding NavigationViewModel}"/>
-        <view:PersonDetailView Grid.Column="1" DataContext="{Binding PersonDetailViewModel}"/>
+        <Menu Grid.ColumnSpan="2" FontSize="20">
+            <MenuItem Header="Create">
+                <MenuItem Header="New Person" Command="{Binding CreateNewPersonCommand}" />
+            </MenuItem>
+        </Menu>
+        <view:NavigationView Grid.Row="1"
+                             DataContext="{Binding NavigationViewModel}"/>
+        <view:PersonDetailView Grid.Row="1"
+                               Grid.Column="1"
+                               DataContext="{Binding PersonDetailViewModel}"/>
     </Grid>
 </Window>

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Organizer.UI.Event
 {
-    public class OpenPersonDetailViewEvent : PubSubEvent<int>
+    public class OpenPersonDetailViewEvent : PubSubEvent<int?>
     {
         
     }

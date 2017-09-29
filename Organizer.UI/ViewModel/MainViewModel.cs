@@ -1,8 +1,10 @@
 ﻿using Organizer.UI.Event;
 using Organizer.UI.View.Services;
+using Prism.Commands;
 using Prism.Events;
 using System;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Organizer.UI.ViewModel
 {
@@ -23,15 +25,17 @@ namespace Organizer.UI.ViewModel
             _eventAggregator.GetEvent<OpenPersonDetailViewEvent>()
                 .Subscribe(OnOpenPersonDetailView);
 
+            CreateNewPersonCommand = new DelegateCommand(OnCreateNewPersonExecute);
+
             NavigationViewModel = navigationViewModel;
         }
-
 
         public async Task LoadAsync()
         {
             await NavigationViewModel.LoadAsync();
         }
 
+        public ICommand CreateNewPersonCommand { get; }
         public INavigationViewModel NavigationViewModel { get; }
 
         private IPersonDetailViewModel _personDetailViewModel;
@@ -46,7 +50,7 @@ namespace Organizer.UI.ViewModel
         }
 
 
-        private async void OnOpenPersonDetailView(int personId)
+        private async void OnOpenPersonDetailView(int? personId)
         {
             if (PersonDetailViewModel != null && PersonDetailViewModel.HasChanges)
             {
@@ -58,6 +62,11 @@ namespace Organizer.UI.ViewModel
             }
             PersonDetailViewModel = _personDetailViewModelCreator();
             await PersonDetailViewModel.LoadAsync(personId);
+        }
+
+        private void OnCreateNewPersonExecute()
+        {
+            OnOpenPersonDetailView(null);
         }
     }
 }

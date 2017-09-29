@@ -9,5 +9,6 @@ namespace Organizer.UI.Data.Repositories
         Task<Person> GetByIdAsync(int personId);
         Task SaveAsync();
         bool HasChanges();
+        void Add(Person person);
     }
 }
