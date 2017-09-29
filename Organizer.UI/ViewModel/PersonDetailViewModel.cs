@@ -5,21 +5,21 @@ using Organizer.UI.Event;
 using System.Windows.Input;
 using Prism.Commands;
 using Organizer.UI.Wrapper;
+using Organizer.UI.Data.Repositories;
 
 namespace Organizer.UI.ViewModel
 {
     public class PersonDetailViewModel : ViewModelBase, IPersonDetailViewModel
     {
-        private readonly IPersonDataService _personDataService;
+        private readonly IPersonRepository _personRepository;
         private readonly IEventAggregator _eventAggregator;
 
-        public PersonDetailViewModel(IPersonDataService personDataService,
+        public PersonDetailViewModel(IPersonRepository personRepository,
             IEventAggregator eventAggregator)
         {
-            _personDataService = personDataService;
+            _personRepository = personRepository;
             _eventAggregator = eventAggregator;
-            _eventAggregator.GetEvent<OpenPersonDetailViewEvent>()
-                .Subscribe(OnOpenPersonDetailView);
+
             SaveCommand = new DelegateCommand(OnSaveExecute, OnSaveCanExecute);
         }
 
@@ -30,12 +30,32 @@ namespace Organizer.UI.ViewModel
             set { _person = value; OnPropertyChanged(); }
         }
 
+        private bool _hasChanges;
+        public bool HasChanges
+        {
+            get { return _hasChanges; }
+            set
+            {
+                if (_hasChanges != value)
+                {
+                    _hasChanges = value;
+                    OnPropertyChanged();
+                    ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
+                }
+            }
+        }
+
         public async Task LoadAsync(int personId)
         {
-            var person = await _personDataService.GetByIdAsync(personId);
+            var person = await _personRepository.GetByIdAsync(personId);
+
             Person = new PersonWrapper(person);
             Person.PropertyChanged += (s, e) =>
             {
+                if (!HasChanges)
+                {
+                    HasChanges = _personRepository.HasChanges();
+                }
                 if (e.PropertyName == nameof(Person.HasErrors))
                 {
                     ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
@@ -49,7 +69,8 @@ namespace Organizer.UI.ViewModel
 
         private async void OnSaveExecute()
         {
-            await _personDataService.SaveAsync(Person.Model);
+            await _personRepository.SaveAsync();
+            HasChanges = _personRepository.HasChanges();
             _eventAggregator.GetEvent<AfterPersonSavedEvent>().Publish(
                 new AfterPersonSavedEventArgs
                 {
@@ -60,13 +81,7 @@ namespace Organizer.UI.ViewModel
 
         private bool OnSaveCanExecute()
         {
-            // TODO: check if person has changes
-            return Person != null && Person.HasErrors == false;
-        }
-
-        private async void OnOpenPersonDetailView(int personId)
-        {
-            await LoadAsync(personId);
+            return Person != null && Person.HasErrors == false && HasChanges;
         }
     }
 }

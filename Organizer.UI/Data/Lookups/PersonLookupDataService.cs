@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Organizer.UI.Data
+namespace Organizer.UI.Data.Lookups
 {
     public class PersonLookupDataService : IPersonLookupDataService
     {

@@ -2,11 +2,12 @@
 using Organizer.Model;
 using System.Threading.Tasks;
 
-namespace Organizer.UI.Data
+namespace Organizer.UI.Data.Repositories
 {
-    public interface IPersonDataService
+    public interface IPersonRepository
     {
         Task<Person> GetByIdAsync(int personId);
-        Task SaveAsync(Person person);
+        Task SaveAsync();
+        bool HasChanges();
     }
 }

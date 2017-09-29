@@ -4,6 +4,7 @@ using Prism.Events;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Linq;
+using Organizer.UI.Data.Lookups;
 
 namespace Organizer.UI.ViewModel
 {
@@ -33,26 +34,10 @@ namespace Organizer.UI.ViewModel
             Persons.Clear();
             foreach (var item in lookup)
             {
-                Persons.Add(new NavigationItemViewModel(item.Id, item.DisplayMember));
+                Persons.Add(new NavigationItemViewModel(item.Id, item.DisplayMember, _eventAggregator));
             }
         }
 
         public ObservableCollection<NavigationItemViewModel> Persons { get; }
-
-        private NavigationItemViewModel _selectedPerson;
-        public NavigationItemViewModel SelectedPerson
-        {
-            get { return _selectedPerson; }
-            set {
-                _selectedPerson = value;
-                OnPropertyChanged();
-                if (_selectedPerson != null)
-                {
-                    _eventAggregator.GetEvent<OpenPersonDetailViewEvent>()
-                        .Publish(_selectedPerson.Id);
-                }
-            }
-        }
-
     }
 }

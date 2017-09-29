@@ -87,8 +87,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Data\IPersonLookupDataService.cs" />
-    <Compile Include="Data\PersonLookupDataService.cs" />
+    <Compile Include="Data\Lookups\IPersonLookupDataService.cs" />
+    <Compile Include="Data\Lookups\PersonLookupDataService.cs" />
     <Compile Include="Event\AfterPersonSavedEvent.cs" />
     <Compile Include="Event\OpenPersonDetailViewEvent.cs" />
     <Compile Include="Startup\Bootstrapper.cs" />
@@ -105,6 +105,8 @@
     <Compile Include="View\PersonDetailView.xaml.cs">
       <DependentUpon>PersonDetailView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Services\IMessageDialogService.cs" />
+    <Compile Include="View\Services\MessageDialogService.cs" />
     <Compile Include="Wrapper\ModelWrapper.cs" />
     <Compile Include="Wrapper\NotifyDataErrorInfoBase.cs" />
     <Compile Include="Wrapper\PersonWrapper.cs" />
@@ -116,8 +118,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Data\IPersonDataService.cs" />
-    <Compile Include="Data\PersonDataService.cs" />
+    <Compile Include="Data\Repositories\IPersonRepository.cs" />
+    <Compile Include="Data\Repositories\PersonRepository.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
