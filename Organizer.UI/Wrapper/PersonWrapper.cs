@@ -30,6 +30,13 @@ namespace Organizer.UI.Wrapper
             set { SetValue(value); }
         }
 
+        public int? FavouriteLanguageId
+        {
+            get { return GetValue<int?>(); }
+            set { SetValue(value); }
+        }
+
+
         protected override IEnumerable<string> ValidateProperty(string propertyName)
         {
             switch (propertyName)

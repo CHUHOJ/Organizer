@@ -14,6 +14,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -28,8 +30,16 @@
         <Label Grid.Row="4" Content="Email" Margin="10 0"/>
         <TextBox Grid.Row="5" Text="{Binding Person.Email,TargetNullValue='',Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
                  Margin="10 0 10 10"/>
+        
+        <Label Grid.Row="6" Content="Programming Language" Margin="10 0"/>
+        <ComboBox Grid.Row="7" 
+                  ItemsSource="{Binding ProgrammingLanguages}"
+                  DisplayMemberPath="DisplayMember"
+                  SelectedValuePath="Id"
+                 SelectedValue="{Binding Person.FavouriteLanguageId, Mode=TwoWay}"
+                 Margin="10 0 10 10"/>
 
-        <StackPanel Grid.Row="7" Orientation="Horizontal">
+        <StackPanel Grid.Row="9" Orientation="Horizontal">
             <Button Command="{Binding SaveCommand}" Content="Save" Width="125" Margin="10"/>
             <Button Command="{Binding DeleteCommand}" Content="Delete" Width="125" Margin="10"/>
         </StackPanel>

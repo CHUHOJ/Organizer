@@ -68,6 +68,10 @@
     <Compile Include="Migrations\201709210850204_InitialCreate.Designer.cs">
       <DependentUpon>201709210850204_InitialCreate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201710011659379_AddedProgrammingLanguage.cs" />
+    <Compile Include="Migrations\201710011659379_AddedProgrammingLanguage.Designer.cs">
+      <DependentUpon>201710011659379_AddedProgrammingLanguage.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="OrganizerDbContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -97,6 +101,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201709210850204_InitialCreate.resx">
       <DependentUpon>201709210850204_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710011659379_AddedProgrammingLanguage.resx">
+      <DependentUpon>201710011659379_AddedProgrammingLanguage.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

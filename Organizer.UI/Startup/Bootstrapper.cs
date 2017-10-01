@@ -25,7 +25,7 @@ namespace Organizer.UI.Startup
             builder.RegisterType<NavigationViewModel>().As<INavigationViewModel>();
             builder.RegisterType<PersonDetailViewModel>().As<IPersonDetailViewModel>();
 
-            builder.RegisterType<PersonLookupDataService>().AsImplementedInterfaces();
+            builder.RegisterType<LookupDataService>().AsImplementedInterfaces();
             builder.RegisterType<PersonRepository>().As<IPersonRepository>();
 
             return builder.Build();

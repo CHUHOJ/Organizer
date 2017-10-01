@@ -20,6 +20,15 @@ namespace Organizer.DataAccess.Migrations
                 new Person { FirstName = "Józef", LastName = "Nowak" },
                 new Person { FirstName = "Witold", LastName = "Kowalski" }
             );
+
+            context.ProgrammingLanguages.AddOrUpdate(
+                p => p.Name,
+                new ProgrammingLanguage { Name = "C#" },
+                new ProgrammingLanguage { Name = "JavaScript" },
+                new ProgrammingLanguage { Name = "Java" },
+                new ProgrammingLanguage { Name = "PHP" },
+                new ProgrammingLanguage { Name = "F#" }
+                );
         }
     }
 }

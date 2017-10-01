@@ -9,6 +9,8 @@ using Organizer.UI.Data.Repositories;
 using Organizer.Model;
 using System;
 using Organizer.UI.View.Services;
+using Organizer.UI.Data.Lookups;
+using System.Collections.ObjectModel;
 
 namespace Organizer.UI.ViewModel
 {
@@ -17,17 +19,22 @@ namespace Organizer.UI.ViewModel
         private readonly IPersonRepository _personRepository;
         private readonly IEventAggregator _eventAggregator;
         private readonly IMessageDialogService _messageDialogService;
+        private readonly IProgrammingLanguageDataService _programmingLanguageDataService;
 
         public PersonDetailViewModel(IPersonRepository personRepository,
             IEventAggregator eventAggregator,
-            IMessageDialogService messageDialogService)
+            IMessageDialogService messageDialogService,
+            IProgrammingLanguageDataService programmingLanguageDataService)
         {
             _personRepository = personRepository;
             _eventAggregator = eventAggregator;
             _messageDialogService = messageDialogService;
+            _programmingLanguageDataService = programmingLanguageDataService;
 
             SaveCommand = new DelegateCommand(OnSaveExecute, OnSaveCanExecute);
             DeleteCommand = new DelegateCommand(OnDeleteExecute);
+
+            ProgrammingLanguages = new ObservableCollection<LookupItem>();
         }
 
         private PersonWrapper _person;
@@ -38,6 +45,7 @@ namespace Organizer.UI.ViewModel
         }
 
         private bool _hasChanges;
+
         public bool HasChanges
         {
             get { return _hasChanges; }
@@ -58,6 +66,13 @@ namespace Organizer.UI.ViewModel
                 await _personRepository.GetByIdAsync(personId.Value)
                 : CreateNewPerson();
 
+            InitializeFriend(person);
+
+            await LoadProgrammingLanguagesAsync();
+        }
+
+        private void InitializeFriend(Person person)
+        {
             Person = new PersonWrapper(person);
             Person.PropertyChanged += (s, e) =>
             {
@@ -80,8 +95,21 @@ namespace Organizer.UI.ViewModel
             }
         }
 
+        private async Task LoadProgrammingLanguagesAsync()
+        {
+            ProgrammingLanguages.Clear();
+            ProgrammingLanguages.Add(new NullLookupItem { DisplayMember = " - " });
+            var programmingLanguages = await _programmingLanguageDataService.GetProgrammingLanguageAsync();
+
+            foreach (var item in programmingLanguages)
+            {
+                ProgrammingLanguages.Add(item);
+            }
+        }
+
         public ICommand SaveCommand { get; }
         public ICommand DeleteCommand { get; }
+        public ObservableCollection<LookupItem> ProgrammingLanguages { get; }
 
         private async void OnSaveExecute()
         {

@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Organizer.UI.Data.Lookups
 {
-    public class PersonLookupDataService : IPersonLookupDataService
+    public class LookupDataService : IPersonLookupDataService, IProgrammingLanguageDataService
     {
         private readonly Func<OrganizerDbContext> _contextCreator;
 
-        public PersonLookupDataService(Func<OrganizerDbContext> contextCreator)
+        public LookupDataService(Func<OrganizerDbContext> contextCreator)
         {
             _contextCreator = contextCreator;
         }
@@ -28,6 +28,21 @@ namespace Organizer.UI.Data.Lookups
                     {
                         Id = x.Id,
                         DisplayMember = x.FirstName + " " + x.LastName
+                    })
+                    .ToListAsync();
+            }
+        }
+
+        public async Task<IEnumerable<LookupItem>> GetProgrammingLanguageAsync()
+        {
+            using (var ctx = _contextCreator())
+            {
+                return await ctx.ProgrammingLanguages.AsNoTracking()
+                    .Select(x =>
+                    new LookupItem
+                    {
+                        Id = x.Id,
+                        DisplayMember = x.Name
                     })
                     .ToListAsync();
             }
