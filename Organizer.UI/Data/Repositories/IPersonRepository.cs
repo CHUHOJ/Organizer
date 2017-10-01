@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Organizer.Model;
+﻿using Organizer.Model;
 using System.Threading.Tasks;
 
 namespace Organizer.UI.Data.Repositories
@@ -10,5 +9,6 @@ namespace Organizer.UI.Data.Repositories
         Task SaveAsync();
         bool HasChanges();
         void Add(Person person);
+        void Remove(Person person);
     }
 }

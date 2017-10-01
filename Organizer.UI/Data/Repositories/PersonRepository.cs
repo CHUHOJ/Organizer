@@ -30,6 +30,11 @@ namespace Organizer.UI.Data.Repositories
             return _context.ChangeTracker.HasChanges();
         }
 
+        public void Remove(Person person)
+        {
+            _context.Persons.Remove(person);
+        }
+
         public async Task SaveAsync()
         {
             await _context.SaveChangesAsync();

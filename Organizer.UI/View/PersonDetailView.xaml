@@ -31,6 +31,7 @@
 
         <StackPanel Grid.Row="7" Orientation="Horizontal">
             <Button Command="{Binding SaveCommand}" Content="Save" Width="125" Margin="10"/>
+            <Button Command="{Binding DeleteCommand}" Content="Delete" Width="125" Margin="10"/>
         </StackPanel>
     </Grid>
 </UserControl>

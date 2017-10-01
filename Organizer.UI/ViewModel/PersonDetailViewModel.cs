@@ -8,6 +8,7 @@ using Organizer.UI.Wrapper;
 using Organizer.UI.Data.Repositories;
 using Organizer.Model;
 using System;
+using Organizer.UI.View.Services;
 
 namespace Organizer.UI.ViewModel
 {
@@ -15,14 +16,18 @@ namespace Organizer.UI.ViewModel
     {
         private readonly IPersonRepository _personRepository;
         private readonly IEventAggregator _eventAggregator;
+        private readonly IMessageDialogService _messageDialogService;
 
         public PersonDetailViewModel(IPersonRepository personRepository,
-            IEventAggregator eventAggregator)
+            IEventAggregator eventAggregator,
+            IMessageDialogService messageDialogService)
         {
             _personRepository = personRepository;
             _eventAggregator = eventAggregator;
+            _messageDialogService = messageDialogService;
 
             SaveCommand = new DelegateCommand(OnSaveExecute, OnSaveCanExecute);
+            DeleteCommand = new DelegateCommand(OnDeleteExecute);
         }
 
         private PersonWrapper _person;
@@ -67,9 +72,16 @@ namespace Organizer.UI.ViewModel
             };
 
             ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
+
+            if (Person.Id == 0)
+            {
+                Person.FirstName = "";
+                Person.LastName = "";
+            }
         }
 
         public ICommand SaveCommand { get; }
+        public ICommand DeleteCommand { get; }
 
         private async void OnSaveExecute()
         {
@@ -86,6 +98,18 @@ namespace Organizer.UI.ViewModel
         private bool OnSaveCanExecute()
         {
             return Person != null && Person.HasErrors == false && HasChanges;
+        }
+
+        private async void OnDeleteExecute()
+        {
+            var result = _messageDialogService.ShowOkCancelDialog($"Do you really want to delete person {Person.FirstName} {Person.LastName}?", "Question");
+            if (result == MessageDialogResult.OK)
+            {
+                _personRepository.Remove(Person.Model);
+                await _personRepository.SaveAsync();
+                _eventAggregator.GetEvent<AfterPersonDeletedEvent>()
+                    .Publish(Person.Id);
+            }
         }
 
         private Person CreateNewPerson()

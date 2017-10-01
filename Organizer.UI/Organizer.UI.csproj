@@ -89,6 +89,7 @@
     </ApplicationDefinition>
     <Compile Include="Data\Lookups\IPersonLookupDataService.cs" />
     <Compile Include="Data\Lookups\PersonLookupDataService.cs" />
+    <Compile Include="Event\AfterPersonDeletedEvent.cs" />
     <Compile Include="Event\AfterPersonSavedEvent.cs" />
     <Compile Include="Event\OpenPersonDetailViewEvent.cs" />
     <Compile Include="Startup\Bootstrapper.cs" />

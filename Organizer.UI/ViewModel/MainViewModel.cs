@@ -24,6 +24,8 @@ namespace Organizer.UI.ViewModel
             _messageDialogService = messageDialogService;
             _eventAggregator.GetEvent<OpenPersonDetailViewEvent>()
                 .Subscribe(OnOpenPersonDetailView);
+            _eventAggregator.GetEvent<AfterPersonDeletedEvent>()
+    .Subscribe(AfterPersonDeleted);
 
             CreateNewPersonCommand = new DelegateCommand(OnCreateNewPersonExecute);
 
@@ -67,6 +69,11 @@ namespace Organizer.UI.ViewModel
         private void OnCreateNewPersonExecute()
         {
             OnOpenPersonDetailView(null);
+        }
+
+        private void AfterPersonDeleted(int personId)
+        {
+            PersonDetailViewModel = null;
         }
     }
 }
