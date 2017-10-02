@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using Organizer.DataAccess;
-using Organizer.UI.Data;
 using Organizer.UI.Data.Lookups;
 using Organizer.UI.Data.Repositories;
 using Organizer.UI.View.Services;
@@ -27,6 +26,7 @@ namespace Organizer.UI.Startup
 
             builder.RegisterType<LookupDataService>().AsImplementedInterfaces();
             builder.RegisterType<PersonRepository>().As<IPersonRepository>();
+            builder.RegisterType<MeetingRepository>().As<IMeetingRepository>();
 
             return builder.Build();
         }

@@ -10,6 +10,7 @@ namespace Organizer.Model
         public Person()
         {
             PhoneNumbers = new Collection<PersonPhoneNumber>();
+            Meetings = new Collection<Meeting>();
         }
         public int Id { get; set; }
         [Required]
@@ -29,5 +30,7 @@ namespace Organizer.Model
         public ProgrammingLanguage FavouriteLanguage { get; set; }
 
         public ICollection<PersonPhoneNumber> PhoneNumbers { get; set; }
+
+        public ICollection<Meeting> Meetings { get; set; }
     }
 }

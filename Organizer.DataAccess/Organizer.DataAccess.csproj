@@ -76,6 +76,10 @@
     <Compile Include="Migrations\201710020849499_AddedPersonPhoneNumbers.Designer.cs">
       <DependentUpon>201710020849499_AddedPersonPhoneNumbers.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201710021230448_AddedMeeting.cs" />
+    <Compile Include="Migrations\201710021230448_AddedMeeting.Designer.cs">
+      <DependentUpon>201710021230448_AddedMeeting.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="OrganizerDbContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -111,6 +115,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201710020849499_AddedPersonPhoneNumbers.resx">
       <DependentUpon>201710020849499_AddedPersonPhoneNumbers.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710021230448_AddedMeeting.resx">
+      <DependentUpon>201710021230448_AddedMeeting.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

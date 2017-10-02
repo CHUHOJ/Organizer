@@ -18,6 +18,8 @@ namespace Organizer.DataAccess
 
         public DbSet<PersonPhoneNumber> PersonPhoneNumbers { get; set; }
 
+        public DbSet<Meeting> Meetings { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
