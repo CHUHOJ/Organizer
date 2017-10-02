@@ -1,9 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Organizer.Model
 {
     public class Person
     {
+        public Person()
+        {
+            PhoneNumbers = new Collection<PersonPhoneNumber>();
+        }
         public int Id { get; set; }
         [Required]
         [StringLength(50)]
@@ -20,5 +27,7 @@ namespace Organizer.Model
         public int? FavouriteLanguageId { get; set; }
 
         public ProgrammingLanguage FavouriteLanguage { get; set; }
+
+        public ICollection<PersonPhoneNumber> PhoneNumbers { get; set; }
     }
 }

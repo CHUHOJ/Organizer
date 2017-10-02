@@ -22,7 +22,7 @@ namespace Organizer.UI.Data.Repositories
 
         public async Task<Person> GetByIdAsync(int personId)
         {
-            return await _context.Persons.SingleOrDefaultAsync(x => x.Id == personId);
+            return await _context.Persons.Include(p => p.PhoneNumbers).SingleOrDefaultAsync(x => x.Id == personId);
         }
 
         public bool HasChanges()
@@ -33,6 +33,11 @@ namespace Organizer.UI.Data.Repositories
         public void Remove(Person person)
         {
             _context.Persons.Remove(person);
+        }
+
+        public void RemovePhoneNumber(PersonPhoneNumber model)
+        {
+            _context.PersonPhoneNumbers.Remove(model);
         }
 
         public async Task SaveAsync()

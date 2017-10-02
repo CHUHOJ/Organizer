@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="LookupItem.cs" />
     <Compile Include="Person.cs" />
+    <Compile Include="PersonPhoneNumber.cs" />
     <Compile Include="ProgrammingLanguage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

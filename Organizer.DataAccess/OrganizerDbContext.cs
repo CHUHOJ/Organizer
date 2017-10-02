@@ -16,6 +16,8 @@ namespace Organizer.DataAccess
 
         public DbSet<ProgrammingLanguage> ProgrammingLanguages { get; set; }
 
+        public DbSet<PersonPhoneNumber> PersonPhoneNumbers { get; set; }
+
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

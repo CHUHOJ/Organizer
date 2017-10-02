@@ -10,5 +10,6 @@ namespace Organizer.UI.Data.Repositories
         bool HasChanges();
         void Add(Person person);
         void Remove(Person person);
+        void RemovePhoneNumber(PersonPhoneNumber model);
     }
 }

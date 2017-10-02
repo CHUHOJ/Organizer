@@ -11,8 +11,6 @@ namespace Organizer.UI
 
         public MainWindow(MainViewModel viewModel)
         {
-            WindowStartupLocation = WindowStartupLocation.CenterScreen;
-
             InitializeComponent();
             _viewModel = viewModel;
             DataContext = _viewModel;

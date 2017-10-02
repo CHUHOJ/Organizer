@@ -2,6 +2,7 @@ namespace Organizer.DataAccess.Migrations
 {
     using Model;
     using System.Data.Entity.Migrations;
+    using System.Linq;
 
     internal sealed class Configuration : DbMigrationsConfiguration<OrganizerDbContext>
     {
@@ -29,6 +30,10 @@ namespace Organizer.DataAccess.Migrations
                 new ProgrammingLanguage { Name = "PHP" },
                 new ProgrammingLanguage { Name = "F#" }
                 );
+
+            context.SaveChanges();
+            context.PersonPhoneNumbers.AddOrUpdate(pn => pn.Number,
+                new PersonPhoneNumber { Number = "+48 515100200", PersonId = context.Persons.First().Id });
         }
     }
 }

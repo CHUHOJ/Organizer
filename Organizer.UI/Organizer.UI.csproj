@@ -111,6 +111,7 @@
     <Compile Include="View\Services\MessageDialogService.cs" />
     <Compile Include="Wrapper\ModelWrapper.cs" />
     <Compile Include="Wrapper\NotifyDataErrorInfoBase.cs" />
+    <Compile Include="Wrapper\PersonPhoneNumberWrapper.cs" />
     <Compile Include="Wrapper\PersonWrapper.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

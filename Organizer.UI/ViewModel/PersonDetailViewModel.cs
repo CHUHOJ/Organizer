@@ -11,6 +11,9 @@ using System;
 using Organizer.UI.View.Services;
 using Organizer.UI.Data.Lookups;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 
 namespace Organizer.UI.ViewModel
 {
@@ -33,8 +36,11 @@ namespace Organizer.UI.ViewModel
 
             SaveCommand = new DelegateCommand(OnSaveExecute, OnSaveCanExecute);
             DeleteCommand = new DelegateCommand(OnDeleteExecute);
+            AddPhoneNumberCommand = new DelegateCommand(OnAddPhoneNumberExecute);
+            RemovePhoneNumberCommand = new DelegateCommand(OnRemovePhoneNumberExecute, OnRemovePhoneNumberCanExecute);
 
             ProgrammingLanguages = new ObservableCollection<LookupItem>();
+            PhoneNumbers = new ObservableCollection<PersonPhoneNumberWrapper>();
         }
 
         private PersonWrapper _person;
@@ -45,7 +51,6 @@ namespace Organizer.UI.ViewModel
         }
 
         private bool _hasChanges;
-
         public bool HasChanges
         {
             get { return _hasChanges; }
@@ -66,12 +71,13 @@ namespace Organizer.UI.ViewModel
                 await _personRepository.GetByIdAsync(personId.Value)
                 : CreateNewPerson();
 
-            InitializeFriend(person);
+            InitializePerson(person);
+            InitializePersonPhoneNumbers(person.PhoneNumbers);
 
             await LoadProgrammingLanguagesAsync();
         }
 
-        private void InitializeFriend(Person person)
+        private void InitializePerson(Person person)
         {
             Person = new PersonWrapper(person);
             Person.PropertyChanged += (s, e) =>
@@ -95,6 +101,33 @@ namespace Organizer.UI.ViewModel
             }
         }
 
+        private void InitializePersonPhoneNumbers(ICollection<PersonPhoneNumber> phoneNumbers)
+        {
+            foreach (PersonPhoneNumberWrapper wrapper in PhoneNumbers)
+            {
+                wrapper.PropertyChanged -= PersonPhoneNumberWrapper_PropertyChanged;
+            }
+            PhoneNumbers.Clear();
+            foreach (PersonPhoneNumber personPhoneNumber in phoneNumbers)
+            {
+                var wrapper = new PersonPhoneNumberWrapper(personPhoneNumber);
+                PhoneNumbers.Add(wrapper);
+                wrapper.PropertyChanged += PersonPhoneNumberWrapper_PropertyChanged;
+            }
+        }
+
+        private void PersonPhoneNumberWrapper_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (!HasChanges)
+            {
+                HasChanges = _personRepository.HasChanges();
+            }
+            if (e.PropertyName == nameof(PersonPhoneNumberWrapper.HasErrors))
+            {
+                ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
+            }
+        }
+
         private async Task LoadProgrammingLanguagesAsync()
         {
             ProgrammingLanguages.Clear();
@@ -107,9 +140,24 @@ namespace Organizer.UI.ViewModel
             }
         }
 
+        private PersonPhoneNumberWrapper _selectedPhoneNumber;
+        public PersonPhoneNumberWrapper SelectedPhoneNumber
+        {
+            get { return _selectedPhoneNumber; }
+            set
+            {
+                _selectedPhoneNumber = value;
+                OnPropertyChanged();
+                ((DelegateCommand)RemovePhoneNumberCommand).RaiseCanExecuteChanged();
+            }
+        }
+
         public ICommand SaveCommand { get; }
         public ICommand DeleteCommand { get; }
+        public ICommand AddPhoneNumberCommand { get; }
+        public ICommand RemovePhoneNumberCommand { get; }
         public ObservableCollection<LookupItem> ProgrammingLanguages { get; }
+        public ObservableCollection<PersonPhoneNumberWrapper> PhoneNumbers { get; }
 
         private async void OnSaveExecute()
         {
@@ -125,7 +173,10 @@ namespace Organizer.UI.ViewModel
 
         private bool OnSaveCanExecute()
         {
-            return Person != null && Person.HasErrors == false && HasChanges;
+            return Person != null
+                && Person.HasErrors == false
+                && PhoneNumbers.All(n => !n.HasErrors)
+                && HasChanges;
         }
 
         private async void OnDeleteExecute()
@@ -138,6 +189,30 @@ namespace Organizer.UI.ViewModel
                 _eventAggregator.GetEvent<AfterPersonDeletedEvent>()
                     .Publish(Person.Id);
             }
+        }
+
+        private void OnAddPhoneNumberExecute()
+        {
+            var newNumber = new PersonPhoneNumberWrapper(new PersonPhoneNumber());
+            newNumber.PropertyChanged += PersonPhoneNumberWrapper_PropertyChanged;
+            PhoneNumbers.Add(newNumber);
+            Person.Model.PhoneNumbers.Add(newNumber.Model);
+            newNumber.Number = "";
+        }
+
+        private void OnRemovePhoneNumberExecute()
+        {
+            SelectedPhoneNumber.PropertyChanged -= PersonPhoneNumberWrapper_PropertyChanged;
+            _personRepository.RemovePhoneNumber(SelectedPhoneNumber.Model);
+            PhoneNumbers.Remove(SelectedPhoneNumber);
+            SelectedPhoneNumber = null;
+            HasChanges = _personRepository.HasChanges();
+            ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
+        }
+
+        private bool OnRemovePhoneNumberCanExecute()
+        {
+            return SelectedPhoneNumber != null;
         }
 
         private Person CreateNewPerson()
