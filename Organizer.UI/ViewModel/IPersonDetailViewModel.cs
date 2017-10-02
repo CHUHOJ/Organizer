@@ -2,9 +2,8 @@
 
 namespace Organizer.UI.ViewModel
 {
-    public interface IPersonDetailViewModel
+    public interface IPersonDetailViewModel : IDetailViewModel
     {
-        Task LoadAsync(int? personId);
-        bool HasChanges { get; }
+
     }
 }

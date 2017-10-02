@@ -8,15 +8,17 @@ namespace Organizer.UI.ViewModel
 {
     public class NavigationItemViewModel : ViewModelBase
     {
+        private readonly string _detailViewModelName;
         private readonly IEventAggregator _eventAggregator;
 
         public NavigationItemViewModel(int id, string displayMember,
-            IEventAggregator eventAggregator)
+             string detailViewModelName, IEventAggregator eventAggregator)
         {
             _eventAggregator = eventAggregator;
             Id = id;
             DisplayMember = displayMember;
-            OpenPersonDetailViewCommand = new DelegateCommand(OnOpenPersonDetailView);
+            _detailViewModelName = detailViewModelName;
+            OpenDetailViewCommand = new DelegateCommand(OnOpenDetailViewExecute);
         }
 
         public int Id { get; }
@@ -28,12 +30,16 @@ namespace Organizer.UI.ViewModel
             set { _displayMember = value; OnPropertyChanged(); }
         }
 
-        public ICommand OpenPersonDetailViewCommand { get; }
+        public ICommand OpenDetailViewCommand { get; }
 
-        private void OnOpenPersonDetailView()
+        private void OnOpenDetailViewExecute()
         {
-            _eventAggregator.GetEvent<OpenPersonDetailViewEvent>()
-                .Publish(Id);
+            _eventAggregator.GetEvent<OpenDetailViewEvent>()
+                .Publish(new OpenDetailViewEventArgs
+                {
+                    Id = Id,
+                    ViewModelName = _detailViewModelName
+                });
         }
     }
 }

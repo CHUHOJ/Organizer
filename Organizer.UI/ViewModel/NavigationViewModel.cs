@@ -1,11 +1,9 @@
-﻿using Organizer.UI.Data;
-using Organizer.UI.Event;
+﻿using Organizer.UI.Event;
 using Prism.Events;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Linq;
 using Organizer.UI.Data.Lookups;
-using System;
 
 namespace Organizer.UI.ViewModel
 {
@@ -20,8 +18,8 @@ namespace Organizer.UI.ViewModel
             _personLookupService = personLookupService;
             _eventAggregator = eventAggregator;
             Persons = new ObservableCollection<NavigationItemViewModel>();
-            _eventAggregator.GetEvent<AfterPersonSavedEvent>().Subscribe(AfterPersonSaved);
-            _eventAggregator.GetEvent<AfterPersonDeletedEvent>().Subscribe(AfterPersonDeleted);
+            _eventAggregator.GetEvent<AfterDetailSavedEvent>().Subscribe(AfterDetailSaved);
+            _eventAggregator.GetEvent<AfterDetailDeletedEvent>().Subscribe(AfterDetailDeleted);
         }
 
         public async Task LoadAsync()
@@ -30,32 +28,41 @@ namespace Organizer.UI.ViewModel
             Persons.Clear();
             foreach (var item in lookup)
             {
-                Persons.Add(new NavigationItemViewModel(item.Id, item.DisplayMember, _eventAggregator));
+                Persons.Add(new NavigationItemViewModel(item.Id, item.DisplayMember, nameof(PersonDetailViewModel), _eventAggregator));
             }
         }
 
         public ObservableCollection<NavigationItemViewModel> Persons { get; }
 
-        private void AfterPersonSaved(AfterPersonSavedEventArgs obj)
+        private void AfterDetailSaved(AfterDetailSavedEventArgs obj)
         {
-            var lookupItem = Persons.SingleOrDefault(x => x.Id == obj.Id);
-            if (lookupItem == null)
+            switch (obj.ViewModelName)
             {
-                Persons.Add(new NavigationItemViewModel(obj.Id, obj.DisplayMember, _eventAggregator));
-            }
-            else
-            {
-                lookupItem.DisplayMember = obj.DisplayMember;
+                case nameof(PersonDetailViewModel):
+                    var lookupItem = Persons.SingleOrDefault(x => x.Id == obj.Id);
+                    if (lookupItem == null)
+                    {
+                        Persons.Add(new NavigationItemViewModel(obj.Id, obj.DisplayMember, nameof(PersonDetailViewModel), _eventAggregator));
+                    }
+                    else
+                    {
+                        lookupItem.DisplayMember = obj.DisplayMember;
+                    }
+                    break;
             }
         }
 
-        private void AfterPersonDeleted(int personId)
+        private void AfterDetailDeleted(AfterDetailDeletedEventArgs args)
         {
-            var person = Persons.SingleOrDefault(x => x.Id == personId);
-
-            if (person != null)
+            switch (args.ViewModelName)
             {
-                Persons.Remove(person);
+                case nameof(PersonDetailViewModel):
+                    var person = Persons.SingleOrDefault(x => x.Id == args.Id);
+                    if (person != null)
+                    {
+                        Persons.Remove(person);
+                    }
+                    break;
             }
         }
     }

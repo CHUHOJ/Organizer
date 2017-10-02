@@ -1,41 +1,34 @@
-﻿using Organizer.UI.Data;
-using System.Threading.Tasks;
-using Prism.Events;
-using Organizer.UI.Event;
-using System.Windows.Input;
-using Prism.Commands;
-using Organizer.UI.Wrapper;
-using Organizer.UI.Data.Repositories;
-using Organizer.Model;
-using System;
-using Organizer.UI.View.Services;
+﻿using Organizer.Model;
 using Organizer.UI.Data.Lookups;
-using System.Collections.ObjectModel;
+using Organizer.UI.Data.Repositories;
+using Organizer.UI.View.Services;
+using Organizer.UI.Wrapper;
+using Prism.Commands;
+using Prism.Events;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Organizer.UI.ViewModel
 {
-    public class PersonDetailViewModel : ViewModelBase, IPersonDetailViewModel
+    public class PersonDetailViewModel : DetailViewModelBase, IPersonDetailViewModel
     {
         private readonly IPersonRepository _personRepository;
-        private readonly IEventAggregator _eventAggregator;
         private readonly IMessageDialogService _messageDialogService;
         private readonly IProgrammingLanguageDataService _programmingLanguageDataService;
 
         public PersonDetailViewModel(IPersonRepository personRepository,
             IEventAggregator eventAggregator,
             IMessageDialogService messageDialogService,
-            IProgrammingLanguageDataService programmingLanguageDataService)
+            IProgrammingLanguageDataService programmingLanguageDataService) : base(eventAggregator)
         {
             _personRepository = personRepository;
-            _eventAggregator = eventAggregator;
             _messageDialogService = messageDialogService;
             _programmingLanguageDataService = programmingLanguageDataService;
 
-            SaveCommand = new DelegateCommand(OnSaveExecute, OnSaveCanExecute);
-            DeleteCommand = new DelegateCommand(OnDeleteExecute);
             AddPhoneNumberCommand = new DelegateCommand(OnAddPhoneNumberExecute);
             RemovePhoneNumberCommand = new DelegateCommand(OnRemovePhoneNumberExecute, OnRemovePhoneNumberCanExecute);
 
@@ -50,22 +43,7 @@ namespace Organizer.UI.ViewModel
             set { _person = value; OnPropertyChanged(); }
         }
 
-        private bool _hasChanges;
-        public bool HasChanges
-        {
-            get { return _hasChanges; }
-            set
-            {
-                if (_hasChanges != value)
-                {
-                    _hasChanges = value;
-                    OnPropertyChanged();
-                    ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
-                }
-            }
-        }
-
-        public async Task LoadAsync(int? personId)
+        public override async Task LoadAsync(int? personId)
         {
             var person = personId.HasValue ?
                 await _personRepository.GetByIdAsync(personId.Value)
@@ -152,26 +130,19 @@ namespace Organizer.UI.ViewModel
             }
         }
 
-        public ICommand SaveCommand { get; }
-        public ICommand DeleteCommand { get; }
         public ICommand AddPhoneNumberCommand { get; }
         public ICommand RemovePhoneNumberCommand { get; }
         public ObservableCollection<LookupItem> ProgrammingLanguages { get; }
         public ObservableCollection<PersonPhoneNumberWrapper> PhoneNumbers { get; }
 
-        private async void OnSaveExecute()
+        protected override async void OnSaveExecute()
         {
             await _personRepository.SaveAsync();
             HasChanges = _personRepository.HasChanges();
-            _eventAggregator.GetEvent<AfterPersonSavedEvent>().Publish(
-                new AfterPersonSavedEventArgs
-                {
-                    Id = Person.Id,
-                    DisplayMember = $"{Person.FirstName} {Person.LastName}"
-                });
+            RaiseDetailSavedEvent(Person.Id, $"{Person.FirstName} {Person.LastName}");
         }
 
-        private bool OnSaveCanExecute()
+        protected override bool OnSaveCanExecute()
         {
             return Person != null
                 && Person.HasErrors == false
@@ -179,15 +150,14 @@ namespace Organizer.UI.ViewModel
                 && HasChanges;
         }
 
-        private async void OnDeleteExecute()
+        protected override async void OnDeleteExecute()
         {
             var result = _messageDialogService.ShowOkCancelDialog($"Do you really want to delete person {Person.FirstName} {Person.LastName}?", "Question");
             if (result == MessageDialogResult.OK)
             {
                 _personRepository.Remove(Person.Model);
                 await _personRepository.SaveAsync();
-                _eventAggregator.GetEvent<AfterPersonDeletedEvent>()
-                    .Publish(Person.Id);
+                RaiseDetailDeletedEvent(Person.Id);
             }
         }
 

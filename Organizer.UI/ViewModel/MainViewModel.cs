@@ -22,12 +22,12 @@ namespace Organizer.UI.ViewModel
             _eventAggregator = eventAggregator;
             _personDetailViewModelCreator = personDetailViewModelCreator;
             _messageDialogService = messageDialogService;
-            _eventAggregator.GetEvent<OpenPersonDetailViewEvent>()
-                .Subscribe(OnOpenPersonDetailView);
-            _eventAggregator.GetEvent<AfterPersonDeletedEvent>()
-    .Subscribe(AfterPersonDeleted);
+            _eventAggregator.GetEvent<OpenDetailViewEvent>()
+                .Subscribe(OnOpenDetailView);
+            _eventAggregator.GetEvent<AfterDetailDeletedEvent>()
+                .Subscribe(AfterDetailDeleted);
 
-            CreateNewPersonCommand = new DelegateCommand(OnCreateNewPersonExecute);
+            CreateNewDetailCommand = new DelegateCommand<Type>(OnCreateNewDetailExecute);
 
             NavigationViewModel = navigationViewModel;
         }
@@ -37,24 +37,24 @@ namespace Organizer.UI.ViewModel
             await NavigationViewModel.LoadAsync();
         }
 
-        public ICommand CreateNewPersonCommand { get; }
+        public ICommand CreateNewDetailCommand { get; }
         public INavigationViewModel NavigationViewModel { get; }
 
-        private IPersonDetailViewModel _personDetailViewModel;
-        public IPersonDetailViewModel PersonDetailViewModel
+        private IDetailViewModel _detailViewModel;
+        public IDetailViewModel DetailViewModel
         {
-            get { return _personDetailViewModel; }
+            get { return _detailViewModel; }
             private set
             {
-                _personDetailViewModel = value;
+                _detailViewModel = value;
                 OnPropertyChanged();
             }
         }
 
 
-        private async void OnOpenPersonDetailView(int? personId)
+        private async void OnOpenDetailView(OpenDetailViewEventArgs args)
         {
-            if (PersonDetailViewModel != null && PersonDetailViewModel.HasChanges)
+            if (DetailViewModel != null && DetailViewModel.HasChanges)
             {
                 var result = _messageDialogService.ShowOkCancelDialog("You've made changes. Navigate away?", "Question");
                 if (result == MessageDialogResult.Cancel)
@@ -62,18 +62,25 @@ namespace Organizer.UI.ViewModel
                     return;
                 }
             }
-            PersonDetailViewModel = _personDetailViewModelCreator();
-            await PersonDetailViewModel.LoadAsync(personId);
+
+            switch (args.ViewModelName)
+            {
+                case nameof(PersonDetailViewModel):
+                    DetailViewModel = _personDetailViewModelCreator();
+                    break;
+            }
+
+            await DetailViewModel.LoadAsync(args.Id);
         }
 
-        private void OnCreateNewPersonExecute()
+        private void OnCreateNewDetailExecute(Type viewModelType)
         {
-            OnOpenPersonDetailView(null);
+            OnOpenDetailView(new OpenDetailViewEventArgs { ViewModelName = viewModelType.Name });
         }
 
-        private void AfterPersonDeleted(int personId)
+        private void AfterDetailDeleted(AfterDetailDeletedEventArgs args)
         {
-            PersonDetailViewModel = null;
+            DetailViewModel = null;
         }
     }
 }

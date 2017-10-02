@@ -6,43 +6,22 @@ using System;
 
 namespace Organizer.UI.Data.Repositories
 {
-    public class PersonRepository : IPersonRepository
+    public class PersonRepository : GenericRepository<Person, OrganizerDbContext>, IPersonRepository
     {
-        private readonly OrganizerDbContext _context;
-
         public PersonRepository(OrganizerDbContext context)
+            :base(context)
         {
-            _context = context;
         }
 
-        public void Add(Person person)
+        public override async Task<Person> GetByIdAsync(int personId)
         {
-            _context.Persons.Add(person);
-        }
-
-        public async Task<Person> GetByIdAsync(int personId)
-        {
-            return await _context.Persons.Include(p => p.PhoneNumbers).SingleOrDefaultAsync(x => x.Id == personId);
-        }
-
-        public bool HasChanges()
-        {
-            return _context.ChangeTracker.HasChanges();
-        }
-
-        public void Remove(Person person)
-        {
-            _context.Persons.Remove(person);
+            return await Context.Persons.Include(p => p.PhoneNumbers)
+                .SingleOrDefaultAsync(x => x.Id == personId);
         }
 
         public void RemovePhoneNumber(PersonPhoneNumber model)
         {
-            _context.PersonPhoneNumbers.Remove(model);
-        }
-
-        public async Task SaveAsync()
-        {
-            await _context.SaveChangesAsync();
+            Context.PersonPhoneNumbers.Remove(model);
         }
     }
 }
