@@ -22,7 +22,10 @@ namespace Organizer.UI.Startup
             builder.RegisterType<MessageDialogService>().As<IMessageDialogService>();
             builder.RegisterType<MainViewModel>().AsSelf();
             builder.RegisterType<NavigationViewModel>().As<INavigationViewModel>();
-            builder.RegisterType<PersonDetailViewModel>().As<IPersonDetailViewModel>();
+            builder.RegisterType<PersonDetailViewModel>()
+                .Keyed<IDetailViewModel>(nameof(PersonDetailViewModel));
+            builder.RegisterType<MeetingDetailViewModel>()
+                .Keyed<IDetailViewModel>(nameof(MeetingDetailViewModel));
 
             builder.RegisterType<LookupDataService>().AsImplementedInterfaces();
             builder.RegisterType<PersonRepository>().As<IPersonRepository>();

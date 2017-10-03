@@ -89,6 +89,12 @@ namespace Organizer.UI.ViewModel
                 }
             };
             ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
+
+            if (Meeting.Id == 0)
+            {
+                // to trigger the validation
+                Meeting.Title = "";
+            }
         }
     }
 }

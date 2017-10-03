@@ -1,4 +1,5 @@
-﻿using Organizer.UI.Event;
+﻿using Autofac.Features.Indexed;
+using Organizer.UI.Event;
 using Organizer.UI.View.Services;
 using Prism.Commands;
 using Prism.Events;
@@ -11,16 +12,16 @@ namespace Organizer.UI.ViewModel
     public class MainViewModel : ViewModelBase
     {
         private readonly IEventAggregator _eventAggregator;
-        private readonly Func<IPersonDetailViewModel> _personDetailViewModelCreator;
+        private IIndex<string, IDetailViewModel> _detailViewModelCreator;
         private readonly IMessageDialogService _messageDialogService;
 
         public MainViewModel(INavigationViewModel navigationViewModel,
-            Func<IPersonDetailViewModel> personDetailViewModelCreator,
+            IIndex<string, IDetailViewModel> detailViewModelCreator,
             IEventAggregator eventAggregator,
             IMessageDialogService messageDialogService)
         {
             _eventAggregator = eventAggregator;
-            _personDetailViewModelCreator = personDetailViewModelCreator;
+            _detailViewModelCreator = detailViewModelCreator;
             _messageDialogService = messageDialogService;
             _eventAggregator.GetEvent<OpenDetailViewEvent>()
                 .Subscribe(OnOpenDetailView);
@@ -63,12 +64,19 @@ namespace Organizer.UI.ViewModel
                 }
             }
 
-            switch (args.ViewModelName)
-            {
-                case nameof(PersonDetailViewModel):
-                    DetailViewModel = _personDetailViewModelCreator();
-                    break;
-            }
+            //switch (args.ViewModelName)
+            //{
+            //    case nameof(PersonDetailViewModel):
+            //        DetailViewModel = _personDetailViewModelCreator();
+            //        break;
+            //    case nameof(MeetingDetailViewModel):
+            //        DetailViewModel = _meetingDetailViewModelCreator();
+            //        break;
+            //    default:
+            //        throw new Exception($"ViewModel {args.ViewModelName} not mapped");
+            //}
+
+            DetailViewModel = _detailViewModelCreator[args.ViewModelName];
 
             await DetailViewModel.LoadAsync(args.Id);
         }

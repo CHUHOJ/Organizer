@@ -66,7 +66,7 @@ namespace Organizer.UI.ViewModel
             var lookupItem = items.SingleOrDefault(x => x.Id == args.Id);
             if (lookupItem == null)
             {
-                Persons.Add(new NavigationItemViewModel(args.Id, args.DisplayMember,
+                items.Add(new NavigationItemViewModel(args.Id, args.DisplayMember,
                     args.ViewModelName, _eventAggregator));
             }
             else
