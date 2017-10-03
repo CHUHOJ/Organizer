@@ -4,6 +4,8 @@ using Organizer.UI.View.Services;
 using Prism.Commands;
 using Prism.Events;
 using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -23,6 +25,9 @@ namespace Organizer.UI.ViewModel
             _eventAggregator = eventAggregator;
             _detailViewModelCreator = detailViewModelCreator;
             _messageDialogService = messageDialogService;
+
+            DetailViewModels = new ObservableCollection<IDetailViewModel>();
+
             _eventAggregator.GetEvent<OpenDetailViewEvent>()
                 .Subscribe(OnOpenDetailView);
             _eventAggregator.GetEvent<AfterDetailDeletedEvent>()
@@ -41,13 +46,15 @@ namespace Organizer.UI.ViewModel
         public ICommand CreateNewDetailCommand { get; }
         public INavigationViewModel NavigationViewModel { get; }
 
-        private IDetailViewModel _detailViewModel;
-        public IDetailViewModel DetailViewModel
+        public ObservableCollection<IDetailViewModel> DetailViewModels { get; }
+
+        private IDetailViewModel _selectedDetailViewModel;
+        public IDetailViewModel SelectedDetailViewModel
         {
-            get { return _detailViewModel; }
-            private set
+            get { return _selectedDetailViewModel; }
+            set
             {
-                _detailViewModel = value;
+                _selectedDetailViewModel = value;
                 OnPropertyChanged();
             }
         }
@@ -55,30 +62,17 @@ namespace Organizer.UI.ViewModel
 
         private async void OnOpenDetailView(OpenDetailViewEventArgs args)
         {
-            if (DetailViewModel != null && DetailViewModel.HasChanges)
+            var detailViewModel = DetailViewModels.SingleOrDefault(x => x.Id == args.Id
+            && x.GetType().Name == args.ViewModelName);
+
+            if (detailViewModel == null)
             {
-                var result = _messageDialogService.ShowOkCancelDialog("You've made changes. Navigate away?", "Question");
-                if (result == MessageDialogResult.Cancel)
-                {
-                    return;
-                }
+                detailViewModel = _detailViewModelCreator[args.ViewModelName];
+                await detailViewModel.LoadAsync(args.Id);
+                DetailViewModels.Add(detailViewModel);
             }
 
-            //switch (args.ViewModelName)
-            //{
-            //    case nameof(PersonDetailViewModel):
-            //        DetailViewModel = _personDetailViewModelCreator();
-            //        break;
-            //    case nameof(MeetingDetailViewModel):
-            //        DetailViewModel = _meetingDetailViewModelCreator();
-            //        break;
-            //    default:
-            //        throw new Exception($"ViewModel {args.ViewModelName} not mapped");
-            //}
-
-            DetailViewModel = _detailViewModelCreator[args.ViewModelName];
-
-            await DetailViewModel.LoadAsync(args.Id);
+            SelectedDetailViewModel = detailViewModel;
         }
 
         private void OnCreateNewDetailExecute(Type viewModelType)
@@ -88,7 +82,13 @@ namespace Organizer.UI.ViewModel
 
         private void AfterDetailDeleted(AfterDetailDeletedEventArgs args)
         {
-            DetailViewModel = null;
+            var detailViewModel = DetailViewModels.SingleOrDefault(x => x.Id == args.Id
+            && x.GetType().Name == args.ViewModelName);
+
+            if (detailViewModel != null)
+            {
+                DetailViewModels.Remove(detailViewModel);
+            }
         }
     }
 }

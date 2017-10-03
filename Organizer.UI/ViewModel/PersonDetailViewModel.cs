@@ -49,6 +49,8 @@ namespace Organizer.UI.ViewModel
                 await _personRepository.GetByIdAsync(personId.Value)
                 : CreateNewPerson();
 
+            Id = person.Id;
+
             InitializePerson(person);
             InitializePersonPhoneNumbers(person.PhoneNumbers);
 
@@ -139,6 +141,7 @@ namespace Organizer.UI.ViewModel
         {
             await _personRepository.SaveAsync();
             HasChanges = _personRepository.HasChanges();
+            Id = Person.Id;
             RaiseDetailSavedEvent(Person.Id, $"{Person.FirstName} {Person.LastName}");
         }
 

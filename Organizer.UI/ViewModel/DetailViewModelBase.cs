@@ -3,6 +3,7 @@ using Prism.Commands;
 using Prism.Events;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System;
 
 namespace Organizer.UI.ViewModel
 {
@@ -38,6 +39,13 @@ namespace Organizer.UI.ViewModel
                     ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
                 }
             }
+        }
+
+        private int _id;
+        public int Id
+        {
+            get { return _id; }
+            protected set { _id = value; }
         }
 
         protected virtual void RaiseDetailDeletedEvent(int modelId)
