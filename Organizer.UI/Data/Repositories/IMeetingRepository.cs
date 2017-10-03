@@ -7,5 +7,6 @@ namespace Organizer.UI.Data.Repositories
     public interface IMeetingRepository : IGenericRepository<Meeting>
     {
         Task<List<Person>> GetAllPersonsAsync();
+        Task ReloadPersonAsync(int personId);
     }
 }

@@ -4,27 +4,33 @@ using Prism.Events;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System;
+using Organizer.UI.View.Services;
 
 namespace Organizer.UI.ViewModel
 {
     public abstract class DetailViewModelBase : ViewModelBase, IDetailViewModel
     {
-        public DetailViewModelBase(IEventAggregator eventAggregator)
+        protected readonly IEventAggregator EventAggregator;
+        protected readonly IMessageDialogService MessageDialogService;
+
+        public DetailViewModelBase(IEventAggregator eventAggregator,
+            IMessageDialogService messageDialogService)
         {
             EventAggregator = eventAggregator;
-
+            MessageDialogService = messageDialogService;
             SaveCommand = new DelegateCommand(OnSaveExecute, OnSaveCanExecute);
             DeleteCommand = new DelegateCommand(OnDeleteExecute);
+            CloseDetailViewCommand = new DelegateCommand(OnCloseDetailViewExecute);
         }
-        public abstract Task LoadAsync(int? id);
+
+        public abstract Task LoadAsync(int id);
         public ICommand SaveCommand { get; private set; }
         public ICommand DeleteCommand { get; private set; }
+        public ICommand CloseDetailViewCommand { get; }
 
         protected abstract void OnDeleteExecute();
         protected abstract bool OnSaveCanExecute();
         protected abstract void OnSaveExecute();
-
-        protected readonly IEventAggregator EventAggregator;
 
         private bool _hasChanges;
         public bool HasChanges
@@ -48,6 +54,14 @@ namespace Organizer.UI.ViewModel
             protected set { _id = value; }
         }
 
+        private string _title;
+        public string Title
+        {
+            get { return _title; }
+            set { _title = value; OnPropertyChanged(); }
+        }
+
+
         protected virtual void RaiseDetailDeletedEvent(int modelId)
         {
             EventAggregator.GetEvent<AfterDetailDeletedEvent>().Publish(new AfterDetailDeletedEventArgs
@@ -65,6 +79,25 @@ namespace Organizer.UI.ViewModel
                 DisplayMember = displayMember,
                 ViewModelName = this.GetType().Name
             });
+        }
+
+        protected virtual void OnCloseDetailViewExecute()
+        {
+            if (HasChanges)
+            {
+                var result = MessageDialogService.ShowOkCancelDialog(
+                    "You've made changes. Close this item without saving?", "Question");
+                if (result == MessageDialogResult.Cancel)
+                {
+                    return;
+                }
+            }
+            EventAggregator.GetEvent<AfterDetailClosedEvent>()
+                .Publish(new AfterDetailClosedEventArgs
+                {
+                    Id = this.Id,
+                    ViewModelName = this.GetType().Name
+                });
         }
     }
 }

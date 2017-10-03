@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Collections.Generic;
 using System.Linq;
+using Organizer.UI.Event;
 
 namespace Organizer.UI.ViewModel
 {
     public class MeetingDetailViewModel : DetailViewModelBase, IMeetingDetailViewModel
     {
         private readonly IMeetingRepository _meetingRepository;
-        private readonly IMessageDialogService _messageDialogService;
         private Person _selectedAvailablePerson;
         private Person _selectedAddedPerson;
         private MeetingWrapper _meeting;
@@ -24,10 +24,13 @@ namespace Organizer.UI.ViewModel
 
         public MeetingDetailViewModel(IEventAggregator eventAggregator,
             IMessageDialogService messageDialogService,
-            IMeetingRepository meetingRepository) : base(eventAggregator)
+            IMeetingRepository meetingRepository) : base(eventAggregator, messageDialogService)
         {
-            _messageDialogService = messageDialogService;
             _meetingRepository = meetingRepository;
+            eventAggregator.GetEvent<AfterDetailSavedEvent>()
+                .Subscribe(AfterDetailSaved);
+            eventAggregator.GetEvent<AfterDetailDeletedEvent>()
+                .Subscribe(AfterDetailDeleted);
 
             AddedPersons = new ObservableCollection<Person>();
             AvailablePersons = new ObservableCollection<Person>();
@@ -68,17 +71,18 @@ namespace Organizer.UI.ViewModel
             }
         }
 
-        public override async Task LoadAsync(int? meetingId)
+        public override async Task LoadAsync(int meetingId)
         {
-            var meeting = meetingId.HasValue
-                ? await _meetingRepository.GetByIdAsync(meetingId.Value)
+            var meeting = meetingId > 0
+                ? await _meetingRepository.GetByIdAsync(meetingId)
                 : CreateNewMeeting();
 
-            Id = meeting.Id;
+            Id = meetingId;
 
             InitializeMeeting(meeting);
 
             _allPersons = await _meetingRepository.GetAllPersonsAsync();
+
             SetupPicklist();
         }
 
@@ -102,7 +106,7 @@ namespace Organizer.UI.ViewModel
 
         protected override void OnDeleteExecute()
         {
-            var result = _messageDialogService.ShowOkCancelDialog($"Do you really want to delete the meeting {Meeting.Title}?", "Question");
+            var result = MessageDialogService.ShowOkCancelDialog($"Do you really want to delete the meeting {Meeting.Title}?", "Question");
             if (result == MessageDialogResult.OK)
             {
                 _meetingRepository.Remove(Meeting.Model);
@@ -182,6 +186,10 @@ namespace Organizer.UI.ViewModel
                 {
                     ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
                 }
+                if (e.PropertyName == nameof(Meeting.Title))
+                {
+                    SetTitle();
+                }
             };
             ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
 
@@ -189,6 +197,33 @@ namespace Organizer.UI.ViewModel
             {
                 // to trigger the validation
                 Meeting.Title = "";
+            }
+            SetTitle();
+        }
+
+        private void SetTitle()
+        {
+            Title = Meeting.Title;
+        }
+
+        private async void AfterDetailSaved(AfterDetailSavedEventArgs args)
+        {
+            if (args.ViewModelName == nameof(PersonDetailViewModel))
+            {
+                await _meetingRepository.ReloadPersonAsync(args.Id);
+                _allPersons = await _meetingRepository.GetAllPersonsAsync();
+
+                SetupPicklist();
+            }
+        }
+
+        private async void AfterDetailDeleted(AfterDetailDeletedEventArgs args)
+        {
+            if (args.ViewModelName == nameof(PersonDetailViewModel))
+            {
+                _allPersons = await _meetingRepository.GetAllPersonsAsync();
+
+                SetupPicklist();
             }
         }
     }

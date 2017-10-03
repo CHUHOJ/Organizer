@@ -11,22 +11,21 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System;
 
 namespace Organizer.UI.ViewModel
 {
     public class PersonDetailViewModel : DetailViewModelBase, IPersonDetailViewModel
     {
         private readonly IPersonRepository _personRepository;
-        private readonly IMessageDialogService _messageDialogService;
         private readonly IProgrammingLanguageDataService _programmingLanguageDataService;
 
         public PersonDetailViewModel(IPersonRepository personRepository,
             IEventAggregator eventAggregator,
             IMessageDialogService messageDialogService,
-            IProgrammingLanguageDataService programmingLanguageDataService) : base(eventAggregator)
+            IProgrammingLanguageDataService programmingLanguageDataService) : base(eventAggregator, messageDialogService)
         {
             _personRepository = personRepository;
-            _messageDialogService = messageDialogService;
             _programmingLanguageDataService = programmingLanguageDataService;
 
             AddPhoneNumberCommand = new DelegateCommand(OnAddPhoneNumberExecute);
@@ -43,13 +42,13 @@ namespace Organizer.UI.ViewModel
             set { _person = value; OnPropertyChanged(); }
         }
 
-        public override async Task LoadAsync(int? personId)
+        public override async Task LoadAsync(int personId)
         {
-            var person = personId.HasValue ?
-                await _personRepository.GetByIdAsync(personId.Value)
+            var person = personId > 0 ?
+                await _personRepository.GetByIdAsync(personId)
                 : CreateNewPerson();
 
-            Id = person.Id;
+            Id = personId;
 
             InitializePerson(person);
             InitializePersonPhoneNumbers(person.PhoneNumbers);
@@ -70,6 +69,11 @@ namespace Organizer.UI.ViewModel
                 {
                     ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
                 }
+                if (e.PropertyName == nameof(Person.FirstName)
+                || e.PropertyName == nameof(Person.LastName))
+                {
+                    SetTitle();
+                }
             };
 
             ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
@@ -79,6 +83,12 @@ namespace Organizer.UI.ViewModel
                 Person.FirstName = "";
                 Person.LastName = "";
             }
+            SetTitle();
+        }
+
+        private void SetTitle()
+        {
+            Title = $"{Person.FirstName} {Person.LastName}";
         }
 
         private void InitializePersonPhoneNumbers(ICollection<PersonPhoneNumber> phoneNumbers)
@@ -157,10 +167,10 @@ namespace Organizer.UI.ViewModel
         {
             if (await _personRepository.HasMeetingsAsync(Person.Id))
             {
-                _messageDialogService.ShowInfoDialog($"{Person.FirstName} {Person.LastName} can't be deleted, as this person is part of at least one meeting");
+                MessageDialogService.ShowInfoDialog($"{Person.FirstName} {Person.LastName} can't be deleted, as this person is part of at least one meeting");
                 return;
             }
-            var result = _messageDialogService.ShowOkCancelDialog($"Do you really want to delete person {Person.FirstName} {Person.LastName}?", "Question");
+            var result = MessageDialogService.ShowOkCancelDialog($"Do you really want to delete person {Person.FirstName} {Person.LastName}?", "Question");
             if (result == MessageDialogResult.OK)
             {
                 _personRepository.Remove(Person.Model);

@@ -4,6 +4,8 @@ using System.Data.Entity;
 using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Data.Entity.Infrastructure;
 
 namespace Organizer.UI.Data.Repositories
 {
@@ -23,6 +25,17 @@ namespace Organizer.UI.Data.Repositories
             return await Context.Meetings
                 .Include(x => x.Persons)
                 .SingleOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task ReloadPersonAsync(int personId)
+        {
+            DbEntityEntry<Person> dbEntityEntry = Context.ChangeTracker.Entries<Person>()
+                .SingleOrDefault(x => x.Entity.Id == personId);
+
+            if (dbEntityEntry != null)
+            {
+                await dbEntityEntry.ReloadAsync();
+            }
         }
     }
 }

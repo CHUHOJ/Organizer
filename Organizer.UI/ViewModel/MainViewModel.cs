@@ -32,6 +32,8 @@ namespace Organizer.UI.ViewModel
                 .Subscribe(OnOpenDetailView);
             _eventAggregator.GetEvent<AfterDetailDeletedEvent>()
                 .Subscribe(AfterDetailDeleted);
+            _eventAggregator.GetEvent<AfterDetailClosedEvent>()
+                .Subscribe(AfterDetailClosed);
 
             CreateNewDetailCommand = new DelegateCommand<Type>(OnCreateNewDetailExecute);
 
@@ -75,15 +77,31 @@ namespace Organizer.UI.ViewModel
             SelectedDetailViewModel = detailViewModel;
         }
 
+        private int nextNewItemId = 0;
         private void OnCreateNewDetailExecute(Type viewModelType)
         {
-            OnOpenDetailView(new OpenDetailViewEventArgs { ViewModelName = viewModelType.Name });
+            OnOpenDetailView(
+                new OpenDetailViewEventArgs
+                {
+                    Id = nextNewItemId--,
+                    ViewModelName = viewModelType.Name
+                });
         }
 
         private void AfterDetailDeleted(AfterDetailDeletedEventArgs args)
         {
-            var detailViewModel = DetailViewModels.SingleOrDefault(x => x.Id == args.Id
-            && x.GetType().Name == args.ViewModelName);
+            RemoveDetailViewModel(args.Id, args.ViewModelName);
+        }
+
+        private void AfterDetailClosed(AfterDetailClosedEventArgs args)
+        {
+            RemoveDetailViewModel(args.Id, args.ViewModelName);
+        }
+
+        private void RemoveDetailViewModel(int id, string viewModelName)
+        {
+            var detailViewModel = DetailViewModels.SingleOrDefault(x => x.Id == id
+            && x.GetType().Name == viewModelName);
 
             if (detailViewModel != null)
             {

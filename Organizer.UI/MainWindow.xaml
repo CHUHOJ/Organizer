@@ -44,9 +44,12 @@
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="Title"/>
+                        <TextBlock Text="{Binding Title}"/>
                         <TextBlock Text="*" Visibility="{Binding HasChanges, 
                             Converter={StaticResource booleanToVisibilityConverter}}"/>
+                        <Button Command="{Binding CloseDetailViewCommand}"
+                                VerticalContentAlignment="Top" Margin="2"
+                                Content="x" FontSize="20"/>
                     </StackPanel>
                 </DataTemplate>
             </TabControl.ItemTemplate>
