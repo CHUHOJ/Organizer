@@ -152,6 +152,11 @@ namespace Organizer.UI.ViewModel
 
         protected override async void OnDeleteExecute()
         {
+            if (await _personRepository.HasMeetingsAsync(Person.Id))
+            {
+                _messageDialogService.ShowInfoDialog($"{Person.FirstName} {Person.LastName} can't be deleted, as this person is part of at least one meeting");
+                return;
+            }
             var result = _messageDialogService.ShowOkCancelDialog($"Do you really want to delete person {Person.FirstName} {Person.LastName}?", "Question");
             if (result == MessageDialogResult.OK)
             {
