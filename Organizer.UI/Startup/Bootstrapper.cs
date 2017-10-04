@@ -26,10 +26,13 @@ namespace Organizer.UI.Startup
                 .Keyed<IDetailViewModel>(nameof(PersonDetailViewModel));
             builder.RegisterType<MeetingDetailViewModel>()
                 .Keyed<IDetailViewModel>(nameof(MeetingDetailViewModel));
+            builder.RegisterType<ProgrammingLanguageDetailViewModel>()
+                .Keyed<IDetailViewModel>(nameof(ProgrammingLanguageDetailViewModel));
 
             builder.RegisterType<LookupDataService>().AsImplementedInterfaces();
             builder.RegisterType<PersonRepository>().As<IPersonRepository>();
             builder.RegisterType<MeetingRepository>().As<IMeetingRepository>();
+            builder.RegisterType<ProgrammingLanguageRepository>().As<IProgrammingLanguageRepository>();
 
             return builder.Build();
         }

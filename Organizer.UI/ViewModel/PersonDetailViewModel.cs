@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System;
+using Organizer.UI.Event;
 
 namespace Organizer.UI.ViewModel
 {
@@ -27,6 +28,9 @@ namespace Organizer.UI.ViewModel
         {
             _personRepository = personRepository;
             _programmingLanguageDataService = programmingLanguageDataService;
+
+            eventAggregator.GetEvent<AfterCollectionSavedEvent>()
+                .Subscribe(AfterCollectionSaved);
 
             AddPhoneNumberCommand = new DelegateCommand(OnAddPhoneNumberExecute);
             RemovePhoneNumberCommand = new DelegateCommand(OnRemovePhoneNumberExecute, OnRemovePhoneNumberCanExecute);
@@ -208,6 +212,14 @@ namespace Organizer.UI.ViewModel
             var person = new Person();
             _personRepository.Add(person);
             return person;
+        }
+
+        private async void AfterCollectionSaved(AfterCollectionSavedEventArgs args)
+        {
+            if (args.ViewModelName == nameof(ProgrammingLanguageDetailViewModel))
+            {
+                await LoadProgrammingLanguagesAsync();
+            }
         }
     }
 }
