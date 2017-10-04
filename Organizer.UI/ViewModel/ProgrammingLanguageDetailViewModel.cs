@@ -126,7 +126,7 @@ namespace Organizer.UI.ViewModel
 
             if (isReferenced)
             {
-                MessageDialogService.ShowInfoDialog($"The language {SelectedProgrammingLanguage.Name}" + 
+                MessageDialogService.ShowInfoDialog($"The language {SelectedProgrammingLanguage.Name} " + 
                     "can't be removed, because it is referenced by at least one person.");
                 return;
             }

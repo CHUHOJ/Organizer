@@ -80,6 +80,10 @@
     <Compile Include="Migrations\201710021230448_AddedMeeting.Designer.cs">
       <DependentUpon>201710021230448_AddedMeeting.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201710041149444_AddedRowVersionToPerson.cs" />
+    <Compile Include="Migrations\201710041149444_AddedRowVersionToPerson.Designer.cs">
+      <DependentUpon>201710041149444_AddedRowVersionToPerson.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="OrganizerDbContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -118,6 +122,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201710021230448_AddedMeeting.resx">
       <DependentUpon>201710021230448_AddedMeeting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201710041149444_AddedRowVersionToPerson.resx">
+      <DependentUpon>201710041149444_AddedRowVersionToPerson.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />

@@ -29,6 +29,9 @@ namespace Organizer.Model
 
         public ProgrammingLanguage FavouriteLanguage { get; set; }
 
+        [Timestamp]
+        public byte[] RowVersion { get; set; }
+
         public ICollection<PersonPhoneNumber> PhoneNumbers { get; set; }
 
         public ICollection<Meeting> Meetings { get; set; }

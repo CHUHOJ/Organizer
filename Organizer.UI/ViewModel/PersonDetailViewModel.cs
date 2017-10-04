@@ -1,6 +1,7 @@
 ﻿using Organizer.Model;
 using Organizer.UI.Data.Lookups;
 using Organizer.UI.Data.Repositories;
+using Organizer.UI.Event;
 using Organizer.UI.View.Services;
 using Organizer.UI.Wrapper;
 using Prism.Commands;
@@ -11,8 +12,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using System;
-using Organizer.UI.Event;
 
 namespace Organizer.UI.ViewModel
 {
@@ -153,10 +152,13 @@ namespace Organizer.UI.ViewModel
 
         protected override async void OnSaveExecute()
         {
-            await _personRepository.SaveAsync();
-            HasChanges = _personRepository.HasChanges();
-            Id = Person.Id;
-            RaiseDetailSavedEvent(Person.Id, $"{Person.FirstName} {Person.LastName}");
+            await SaveWithOptimisticConcurrencyAsync(_personRepository.SaveAsync,
+                () =>
+                {
+                    HasChanges = _personRepository.HasChanges();
+                    Id = Person.Id;
+                    RaiseDetailSavedEvent(Person.Id, $"{Person.FirstName} {Person.LastName}");
+                });
         }
 
         protected override bool OnSaveCanExecute()
