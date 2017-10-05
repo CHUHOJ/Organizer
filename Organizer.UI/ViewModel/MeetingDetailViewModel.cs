@@ -104,13 +104,13 @@ namespace Organizer.UI.ViewModel
             }
         }
 
-        protected override void OnDeleteExecute()
+        protected override async void OnDeleteExecute()
         {
-            var result = MessageDialogService.ShowOkCancelDialog($"Do you really want to delete the meeting {Meeting.Title}?", "Question");
+            var result = await MessageDialogService.ShowOkCancelDialogAsync($"Do you really want to delete the meeting {Meeting.Title}?", "Question");
             if (result == MessageDialogResult.OK)
             {
                 _meetingRepository.Remove(Meeting.Model);
-                _meetingRepository.SaveAsync();
+                await _meetingRepository.SaveAsync();
                 RaiseDetailDeletedEvent(Meeting.Id);
             }
         }

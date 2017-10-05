@@ -14,7 +14,8 @@
 
         <DataTemplate x:Key="NaviItemTemplate">
             <Button Content="{Binding DisplayMember}"
-                                Command="{Binding OpenDetailViewCommand}">
+                    Command="{Binding OpenDetailViewCommand}"
+                    FontSize="16">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <Grid x:Name="grid">
@@ -42,18 +43,20 @@
         </Grid.RowDefinitions>
         <GroupBox Header="Persons">
             <ScrollViewer VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Auto">
+                          HorizontalScrollBarVisibility="Auto">
                 <ItemsControl ItemsSource="{Binding Persons}"
-                          ItemContainerStyle="{StaticResource NaviItemContainerStyle}"
-                          ItemTemplate="{StaticResource NaviItemTemplate}"/>
+                              ItemContainerStyle="{StaticResource NaviItemContainerStyle}"
+                              ItemTemplate="{StaticResource NaviItemTemplate}"
+                              Margin="10 0 10 5"/>
             </ScrollViewer>
         </GroupBox>
         <GroupBox Header="Meetings" Grid.Row="1">
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Auto">
                 <ItemsControl ItemsSource="{Binding Meetings}"
-                          ItemContainerStyle="{StaticResource NaviItemContainerStyle}"
-                          ItemTemplate="{StaticResource NaviItemTemplate}"/>
+                              ItemContainerStyle="{StaticResource NaviItemContainerStyle}"
+                              ItemTemplate="{StaticResource NaviItemTemplate}"
+                              Margin="10 0 10 5"/>
             </ScrollViewer>
         </GroupBox>
     </Grid>

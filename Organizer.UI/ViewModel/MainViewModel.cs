@@ -78,7 +78,7 @@ namespace Organizer.UI.ViewModel
                 }
                 catch
                 {
-                    _messageDialogService.ShowInfoDialog("Could not load the entity, " +
+                    await _messageDialogService.ShowInfoDialogAsync("Could not load the entity, " +
                         "maybe it was deleted in the meantime by another user." +
                         "The navigation is refreshed of you.");
                     await NavigationViewModel.LoadAsync();

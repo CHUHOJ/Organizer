@@ -104,7 +104,7 @@ namespace Organizer.UI.ViewModel
                 {
                     ex = ex.InnerException;
                 }
-                MessageDialogService.ShowInfoDialog($"Error while saving entities, the data will be reloaded. Details: {ex.Message}");
+                await MessageDialogService.ShowInfoDialogAsync($"Error while saving entities, the data will be reloaded. Details: {ex.Message}");
                 await LoadAsync(Id);
             }
         }
@@ -126,7 +126,7 @@ namespace Organizer.UI.ViewModel
 
             if (isReferenced)
             {
-                MessageDialogService.ShowInfoDialog($"The language {SelectedProgrammingLanguage.Name} " + 
+                await MessageDialogService.ShowInfoDialogAsync($"The language {SelectedProgrammingLanguage.Name} " + 
                     "can't be removed, because it is referenced by at least one person.");
                 return;
             }

@@ -1,19 +1,25 @@
-﻿using System.Windows;
+﻿using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
+using System.Threading.Tasks;
 
 namespace Organizer.UI.View.Services
 {
     public class MessageDialogService : IMessageDialogService
     {
-        public void ShowInfoDialog(string text)
+        private MetroWindow MetroWindow => (MetroWindow)App.Current.MainWindow;
+
+        public async Task ShowInfoDialogAsync(string text)
         {
-            MessageBox.Show(text, "Info");
+            await MetroWindow.ShowMessageAsync("Info", text);
         }
 
-        public MessageDialogResult ShowOkCancelDialog(string text, string title)
+        public async Task<MessageDialogResult> ShowOkCancelDialogAsync(string text, string title)
         {
-            var result = MessageBox.Show(text, title, MessageBoxButton.OKCancel);
+            var result = await MetroWindow.ShowMessageAsync(title, text, MessageDialogStyle.AffirmativeAndNegative);
 
-            return result == MessageBoxResult.OK ? MessageDialogResult.OK : MessageDialogResult.Cancel;
+            return result == MahApps.Metro.Controls.Dialogs.MessageDialogResult.Affirmative
+                ? MessageDialogResult.OK
+                : MessageDialogResult.Cancel;
         }
     }
     public enum MessageDialogResult
