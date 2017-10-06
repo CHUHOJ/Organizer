@@ -9,6 +9,7 @@
         xmlns:viewModel="clr-namespace:Organizer.UI.ViewModel"
         mc:Ignorable="d" Icon="icon.ico"
         Title="Organizer" Height="700" Width="1000"
+        BorderBrush="{DynamicResource AccentColorBrush}"
         WindowStartupLocation="CenterScreen"
         FontSize="20">
     <Window.Resources>
